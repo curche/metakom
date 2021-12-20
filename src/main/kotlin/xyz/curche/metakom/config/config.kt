@@ -10,13 +10,13 @@ data class Config(
     val password: String,
 )
 
-fun isComment(line: String) = line.startsWith("#") || line.startsWith(";")
+private fun isComment(line: String) = line.startsWith("#") || line.startsWith(";")
 
-fun toKeyValuePair(line: String) = line.split(Regex("[\\s=]"), 2).let {
+private fun toKeyValuePair(line: String) = line.split(Regex("[\\s=]"), 2).let {
     Pair(it[0], if (it.size == 1 ) "" else it[1])
 }
 
-fun toConfig(hashMap: HashMap<String, String>) = Config(
+private fun toConfig(hashMap: HashMap<String, String>) = Config(
     hashMap["BASE_URL"] ?: "http://localhost:8080",
     hashMap["USERNAME"] ?: "demo",
     hashMap["PASSWORD"] ?: "demo"
