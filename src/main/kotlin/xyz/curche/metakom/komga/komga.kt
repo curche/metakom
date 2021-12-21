@@ -1,6 +1,5 @@
 package xyz.curche.metakom.komga
 
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import okhttp3.*
@@ -107,19 +106,40 @@ open class Komga(config: Config) {
     private fun popularMangaRequest(page: Int): Request =
         GET("$baseUrl/api/v1/series?page=${page}&deleted=false", headers)
 
-    fun fetchPopularManga(page: Int): String {
+    fun fetchPopularManga(page: Int) {
         val response = client.newCall(popularMangaRequest(page)).execute()
-        if (response.code == 200) {
-            return processSeriesPage(response).prettyPrint()
+        if (response.code != 200) {
+            throw IllegalStateException(" ERROR! Response code ${response.code}(?)")
         }
 
-        throw IllegalStateException(" ERROR! Response code ${response.code}(?)")
+        processSeriesPage(response).map {
+            val seriesId = it.id
+            println("Entering series ${it.name} with ID ${it.id}")
+            val bookUrl = "$baseUrl/api/v1/series/$seriesId"
+            val bookResponse = client.newCall(bookListRequest(bookUrl)).execute()
+            if (bookResponse.code != 200) {
+                throw IllegalStateException(" ERROR! Response code ${bookResponse.code}(?)")
+            } else {
+                bookListParse(bookResponse).map { book ->
+                    println("Detected book ${book.name}")
+                }
+            }
+        }
     }
 
-    private fun processSeriesPage(response: Response): PageWrapperDto<SeriesDto> {
+    private fun bookListRequest(url: String): Request =
+        GET("$url/books?unpaged=true&media_status=READY&deleted=false")
+
+    private fun bookListParse(response: Response): List<BookDto> {
+        val bookResponseBody = response.body ?: throw IllegalStateException("Response code ${response.code}")
+
+        return json.decodeFromString<PageWrapperDto<BookDto>>(bookResponseBody.string()).content
+    }
+
+    private fun processSeriesPage(response: Response): List<SeriesDto> {
         val responseBody = response.body ?: throw IllegalStateException("Response code ${response.code}")
 
-        return json.decodeFromString<PageWrapperDto<SeriesDto>>(responseBody.string())
+        return json.decodeFromString<PageWrapperDto<SeriesDto>>(responseBody.string()).content
     }
 
     companion object {

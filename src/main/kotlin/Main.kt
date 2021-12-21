@@ -10,5 +10,5 @@ fun main(args: Array<String>) {
     val komga = Komga(configuration)
 
     println(komga.checkUsers())
-    println(komga.fetchPopularManga(0))
+    komga.fetchPopularManga(0)
 }
