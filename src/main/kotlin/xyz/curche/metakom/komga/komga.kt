@@ -6,6 +6,7 @@ import kotlinx.serialization.json.Json
 import okhttp3.*
 import xyz.curche.metakom.config.Config
 import java.io.IOException
+import java.lang.IllegalStateException
 import java.util.concurrent.TimeUnit
 import kotlin.jvm.Throws
 
@@ -70,13 +71,6 @@ class BasicAuthInterceptor(id: String, pass: String): Interceptor {
     }
 }
 
-@Serializable
-data class UserDto(
-    val id: String,
-    val email: String,
-    val roles: List<String>,
-)
-
 open class Komga(config: Config) {
 
     private val baseUrl: String = config.baseUrl
@@ -108,7 +102,27 @@ open class Komga(config: Config) {
 
         return "ERROR"
     }
-    // fun popularMangaRequest(page: Int): Request = GET("")
+
+    // pages indexed 0...N
+    private fun popularMangaRequest(page: Int): Request =
+        GET("$baseUrl/api/v1/series?page=${page}&deleted=false", headers)
+
+    fun fetchPopularManga(page: Int) {
+        val response = client.newCall(popularMangaRequest(page)).execute()
+        if (response.code == 200) {
+            return processSeriesPage(response)
+        }
+    }
+
+    private fun processSeriesPage(response: Response) {
+        val responseBody = response.body ?: throw IllegalStateException("Response code ${response.code}")
+
+        return responseBody.use { body ->
+            with(json.decodeFromString<PageWrapperDto<SeriesDto>>(body.string())) {
+                println("$this")
+            }
+        }
+    }
 
     companion object {
         const val DEFAULT_USER_AGENT = "curcheMetakom"
