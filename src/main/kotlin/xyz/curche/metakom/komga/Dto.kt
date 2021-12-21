@@ -51,6 +51,44 @@ data class BookMetadataAggregationDto(
 )
 
 @Serializable
+data class BookDto(
+    val id: String,
+    val seriesId: String,
+    val name: String,
+    val number: Float,
+    val created: String?,
+    val lastModified: String?,
+    val fileLastModified: String,
+    val sizeBytes: Long,
+    val size: String,
+    val media: MediaDto,
+    val metadata: BookMetadataDto
+)
+
+@Serializable
+data class MediaDto(
+    val status: String,
+    val mediaType: String,
+    val pagesCount: Int
+)
+
+@Serializable
+data class BookMetadataDto(
+    val title: String,
+    val titleLock: Boolean,
+    val summary: String,
+    val summaryLock: Boolean,
+    val number: String,
+    val numberLock: Boolean,
+    val numberSort: Float,
+    val numberSortLock: Boolean,
+    val releaseDate: String?,
+    val releaseDateLock: Boolean,
+    val authors: List<AuthorDto>,
+    val authorsLock: Boolean
+)
+
+@Serializable
 data class AuthorDto(
     val name: String,
     val role: String
