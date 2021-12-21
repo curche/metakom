@@ -107,21 +107,19 @@ open class Komga(config: Config) {
     private fun popularMangaRequest(page: Int): Request =
         GET("$baseUrl/api/v1/series?page=${page}&deleted=false", headers)
 
-    fun fetchPopularManga(page: Int) {
+    fun fetchPopularManga(page: Int): String {
         val response = client.newCall(popularMangaRequest(page)).execute()
         if (response.code == 200) {
-            return processSeriesPage(response)
+            return processSeriesPage(response).prettyPrint()
         }
+
+        throw IllegalStateException(" ERROR! Response code ${response.code}(?)")
     }
 
-    private fun processSeriesPage(response: Response) {
+    private fun processSeriesPage(response: Response): PageWrapperDto<SeriesDto> {
         val responseBody = response.body ?: throw IllegalStateException("Response code ${response.code}")
 
-        return responseBody.use { body ->
-            with(json.decodeFromString<PageWrapperDto<SeriesDto>>(body.string())) {
-                println("$this")
-            }
-        }
+        return json.decodeFromString<PageWrapperDto<SeriesDto>>(responseBody.string())
     }
 
     companion object {
