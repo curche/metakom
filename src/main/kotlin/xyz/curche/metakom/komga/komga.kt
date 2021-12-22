@@ -18,17 +18,12 @@ open class Komga(config: Config) {
     private val password: String = config.password
     private val json by lazy { Json { ignoreUnknownKeys = true } }
 
-    private fun headersBuilder() = Headers.Builder().apply {
-        add("User-Agent", DEFAULT_USER_AGENT)
-    }
-
     private val client = OkHttpClient.Builder()
         .connectTimeout(30, TimeUnit.SECONDS)
         .readTimeout(30, TimeUnit.SECONDS)
+        .addInterceptor(UserAgentInterceptor(DEFAULT_USER_AGENT))
         .addInterceptor(BasicAuthInterceptor(username, password))
         .build()
-
-    private val headers: Headers by lazy { headersBuilder().build() }
 
     fun checkUsers(): String {
         val userRequest = GET("$baseUrl/api/v1/users")
@@ -45,7 +40,7 @@ open class Komga(config: Config) {
 
     // pages indexed 0...N
     private fun popularMangaRequest(page: Int): Request =
-        GET("$baseUrl/api/v1/series?page=${page}&deleted=false", headers)
+        GET("$baseUrl/api/v1/series?page=${page}&deleted=false")
 
     fun fetchPopularManga(page: Int) {
         val response = client.newCall(popularMangaRequest(page)).execute()
@@ -84,6 +79,6 @@ open class Komga(config: Config) {
     }
 
     companion object {
-        const val DEFAULT_USER_AGENT = "curcheMetakom"
+        const val DEFAULT_USER_AGENT = "curche's metakom"
     }
 }
