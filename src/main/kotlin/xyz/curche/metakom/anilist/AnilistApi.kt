@@ -10,6 +10,7 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.int
+import kotlinx.serialization.json.intOrNull
 import kotlinx.serialization.json.boolean
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -75,7 +76,7 @@ class AnilistApi {
     private fun jsonToALSearchResult(struct: JsonObject): ALSearchResult {
         return ALSearchResult(
             struct["id"]!!.jsonPrimitive.int,
-            struct["idMal"]!!.jsonPrimitive.int,
+            struct["idMal"]?.jsonPrimitive?.intOrNull ?: 0,
             struct["title"]!!.jsonObject["romaji"]!!.jsonPrimitive.content,
             struct["title"]!!.jsonObject["english"]?.jsonPrimitive?.content ?: "na",
             struct["format"]!!.jsonPrimitive.content.replace("_", "-"),
