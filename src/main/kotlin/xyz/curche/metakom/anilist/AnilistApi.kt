@@ -12,6 +12,7 @@ import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.int
 import kotlinx.serialization.json.intOrNull
 import kotlinx.serialization.json.boolean
+import kotlinx.serialization.json.contentOrNull
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -78,7 +79,7 @@ class AnilistApi {
             struct["id"]!!.jsonPrimitive.int,
             struct["idMal"]?.jsonPrimitive?.intOrNull ?: 0,
             struct["title"]!!.jsonObject["romaji"]!!.jsonPrimitive.content,
-            struct["title"]!!.jsonObject["english"]?.jsonPrimitive?.content ?: "na",
+            struct["title"]!!.jsonObject["english"]?.jsonPrimitive?.contentOrNull ?: "na",
             struct["format"]!!.jsonPrimitive.content.replace("_", "-"),
             struct["status"]!!.jsonPrimitive.content,
             struct["countryOfOrigin"]!!.jsonPrimitive.content,
