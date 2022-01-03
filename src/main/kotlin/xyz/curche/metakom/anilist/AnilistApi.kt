@@ -17,7 +17,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.toRequestBody
 import xyz.curche.metakom.network.POST
-import xyz.curche.metakom.network.RateLimitInterceptor
+import xyz.curche.metakom.network.interceptor.RateLimitInterceptor
 import java.util.Calendar
 import java.util.concurrent.TimeUnit.MINUTES
 

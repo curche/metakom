@@ -8,7 +8,7 @@ import kotlinx.serialization.json.jsonObject
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import xyz.curche.metakom.network.GET
-import xyz.curche.metakom.network.RateLimitInterceptor
+import xyz.curche.metakom.network.interceptor.RateLimitInterceptor
 import java.util.concurrent.TimeUnit
 
 class JikanAPI {
