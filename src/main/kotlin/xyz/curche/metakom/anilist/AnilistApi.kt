@@ -27,7 +27,18 @@ class AnilistApi {
         .build()
     private val json by lazy { Json { ignoreUnknownKeys = true } }
 
-    fun search(searchString: String) {
+    fun searchAndSelectId(searchString: String): Int {
+        val searchResults = search(searchString)
+
+        searchResults.mapIndexed { index: Int, it: ALSearchResult ->
+            println("$index - ${it.title_english} ${it.title_romaji}, ${it.anilist_id}: ${it.publication_status}, (${it.country_of_origin})")
+        }
+        println("Select the corresponding ID: ")
+        val choice = readLine()!!.toIntOrNull() ?: 0
+        return searchResults[choice].anilist_id
+    }
+
+    private fun search(searchString: String): List<ALSearchResult> {
         val query = """
         |query Search(${'$'}query: String) {
             |Page (perPage: 3) {
@@ -68,9 +79,7 @@ class AnilistApi {
                 val page = data["Page"]!!.jsonObject
                 val media = page["media"]!!.jsonArray
                 val entries = media.map { jsonToALSearchResult(it.jsonObject) }
-                entries.map {
-                    println("${it.title_romaji}, ${it.anilist_id}: ${it.publication_status}, (${it.country_of_origin})")
-                }
+                entries
             }
     }
 
