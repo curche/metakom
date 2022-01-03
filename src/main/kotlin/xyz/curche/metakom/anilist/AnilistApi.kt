@@ -27,6 +27,64 @@ class AnilistApi {
         .build()
     private val json by lazy { Json { ignoreUnknownKeys = true } }
 
+    fun searchById(searchId: Int): ALMetadata {
+        val query = """
+        |query Search(${'$'}searchId: Int) {
+            |Media(id: ${'$'}searchId, type: MANGA, format_not_in: [NOVEL], sort: SEARCH_MATCH) {
+                |id
+                |idMal
+                |title {
+                    |english
+                    |romaji
+                |}
+                |format
+                |status(version: 2)
+                |description
+                |countryOfOrigin
+                |source(version: 2)
+                |genres
+                |staff(sort: RELEVANCE, page: 1){
+                    |edges {
+                        |node {
+                            |name {
+                                |full
+                            |}
+                            |languageV2
+                        |}
+                        |role
+                    |}
+                |}
+                |isAdult
+                |siteUrl
+                |chapters
+                |volumes
+                |tags {
+                    |name
+                    |category
+                    |isGeneralSpoiler
+                    |rank
+                |}
+            |}
+        |}
+        |""".trimMargin()
+        val payload = buildJsonObject {
+            put("query", query)
+            putJsonObject("variables") {
+                put("searchId", searchId)
+            }
+        }
+
+        return client
+            .newCall(POST(apiUrl, body = payload.toString().toRequestBody(jsonMime)))
+            .execute()
+            .let { response ->
+                val responseBody = response.body?.string().orEmpty()
+                val data = json.decodeFromString<ALResponse<ALMedia>>(responseBody).data
+                val metadata = data.Media
+                metadata
+            }
+    }
+
     fun searchAndSelectId(searchString: String): Int {
         val searchResults = search(searchString)
 
