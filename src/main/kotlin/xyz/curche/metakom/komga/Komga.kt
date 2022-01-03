@@ -4,10 +4,11 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import okhttp3.Request
 import okhttp3.Response
-import okhttp3.Headers
 import okhttp3.OkHttpClient
 import xyz.curche.metakom.config.Config
 import xyz.curche.metakom.network.GET
+import xyz.curche.metakom.network.interceptor.BasicAuthInterceptor
+import xyz.curche.metakom.network.interceptor.UserAgentInterceptor
 import java.lang.IllegalStateException
 import java.util.concurrent.TimeUnit
 

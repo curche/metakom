@@ -1,4 +1,4 @@
-package xyz.curche.metakom.komga
+package xyz.curche.metakom.network.interceptor
 
 import okhttp3.Credentials
 import okhttp3.Interceptor
@@ -18,19 +18,6 @@ class BasicAuthInterceptor(id: String, pass: String): Interceptor {
         val oldRequest = chain.request()
         val newRequestBuilder = oldRequest.newBuilder()
             .addHeader("Authorization", credentials)
-        return chain.proceed(newRequestBuilder.build())
-    }
-}
-
-class UserAgentInterceptor(customUserAgentString: String = "customUserAgent") : Interceptor {
-
-    private val customUserAgent = customUserAgentString
-
-    @Throws(IOException::class)
-    override fun intercept(chain: Interceptor.Chain): Response {
-        val oldRequest = chain.request()
-        val newRequestBuilder = oldRequest.newBuilder()
-            .addHeader("User-Agent", customUserAgent)
         return chain.proceed(newRequestBuilder.build())
     }
 }

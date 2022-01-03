@@ -17,13 +17,14 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.toRequestBody
 import xyz.curche.metakom.network.POST
+import xyz.curche.metakom.network.RateLimitInterceptor
 import java.util.Calendar
 import java.util.concurrent.TimeUnit.MINUTES
 
 class AnilistApi {
 
     private val client = OkHttpClient.Builder()
-        .addInterceptor(AnilistRateLimitInterceptor(permits = 85, period = 1, unit = MINUTES))
+        .addInterceptor(RateLimitInterceptor(permits = 85, period = 1, unit = MINUTES))
         .build()
     private val json by lazy { Json { ignoreUnknownKeys = true } }
 

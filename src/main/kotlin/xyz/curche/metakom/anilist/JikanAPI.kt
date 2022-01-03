@@ -8,12 +8,13 @@ import kotlinx.serialization.json.jsonObject
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import xyz.curche.metakom.network.GET
+import xyz.curche.metakom.network.RateLimitInterceptor
 import java.util.concurrent.TimeUnit
 
 class JikanAPI {
 
     private val client = OkHttpClient.Builder()
-        .addInterceptor(AnilistRateLimitInterceptor(permits = 3, period = 1, unit = TimeUnit.SECONDS))
+        .addInterceptor(RateLimitInterceptor(permits = 3, period = 1, unit = TimeUnit.SECONDS))
         .build()
 
     private val json by lazy { Json { ignoreUnknownKeys = true } }

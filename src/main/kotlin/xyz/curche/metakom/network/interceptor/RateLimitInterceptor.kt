@@ -1,10 +1,10 @@
-package xyz.curche.metakom.anilist
+package xyz.curche.metakom.network.interceptor
 
 import okhttp3.Interceptor
 import okhttp3.Response
 import java.util.concurrent.TimeUnit
 
-class AnilistRateLimitInterceptor(
+class RateLimitInterceptor(
     private val permits: Int,
     period: Long = 1,
     unit: TimeUnit = TimeUnit.MINUTES
