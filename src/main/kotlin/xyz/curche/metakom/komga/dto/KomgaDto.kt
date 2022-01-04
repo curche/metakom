@@ -1,4 +1,4 @@
-package xyz.curche.metakom.komga
+package xyz.curche.metakom.komga.dto
 
 import kotlinx.serialization.Serializable
 
@@ -113,9 +113,6 @@ data class UserDto(
     val email: String,
     val roles: List<String>,
 )
-
-@Serializable
-data class SeriesMetadataUpdateDto
 
 fun Any.prettyPrint(): String {
     var indentLevel = 0
