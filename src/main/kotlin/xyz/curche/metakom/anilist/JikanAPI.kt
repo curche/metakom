@@ -19,12 +19,16 @@ class JikanAPI {
 
     private val json by lazy { Json { ignoreUnknownKeys = true } }
 
-    fun getSerializationFromID(malId: Int): String {
+    fun getSerializationFromID(malId: Int): String? {
         val response = client.newCall(GET("$apiUrl/manga/$malId")).execute()
         val responseBody = response.body?.string().orEmpty()
         val responseBodyAsJson = json.decodeFromString<JsonObject>(responseBody)
         val data = responseBodyAsJson["data"]!!.jsonObject
         val media = data["serializations"]!!.jsonArray
+        if (media.isEmpty()) {
+            return null
+        }
+
         return media
             .map { it.jsonObject["name"] }
             .joinToString(separator = ", ")

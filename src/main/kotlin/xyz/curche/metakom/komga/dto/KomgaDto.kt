@@ -114,6 +114,9 @@ data class UserDto(
     val roles: List<String>,
 )
 
+@Serializable
+data class SeriesMetadataUpdateDto
+
 fun Any.prettyPrint(): String {
     var indentLevel = 0
     val indentWidth = 4
