@@ -6,6 +6,10 @@ import okhttp3.Request
 import okhttp3.Response
 import okhttp3.OkHttpClient
 import xyz.curche.metakom.config.Config
+import xyz.curche.metakom.komga.dto.UserDto
+import xyz.curche.metakom.komga.dto.BookDto
+import xyz.curche.metakom.komga.dto.PageWrapperDto
+import xyz.curche.metakom.komga.dto.SeriesDto
 import xyz.curche.metakom.network.GET
 import xyz.curche.metakom.network.interceptor.BasicAuthInterceptor
 import xyz.curche.metakom.network.interceptor.UserAgentInterceptor
@@ -43,29 +47,26 @@ open class Komga(config: Config) {
     private fun popularMangaRequest(page: Int): Request =
         GET("$baseUrl/api/v1/series?page=${page}&deleted=false")
 
-    fun fetchPopularManga(page: Int) {
+    fun fetchPopularManga(page: Int): List<SeriesDto> {
         val response = client.newCall(popularMangaRequest(page)).execute()
         if (response.code != 200) {
             throw IllegalStateException(" ERROR! Response code ${response.code}(?)")
         }
 
-        processSeriesPage(response).map {
-            val seriesId = it.id
-            println("Entering series ${it.name} with ID ${it.id}")
-            val bookUrl = "$baseUrl/api/v1/series/$seriesId"
-            val bookResponse = client.newCall(bookListRequest(bookUrl)).execute()
-            if (bookResponse.code != 200) {
-                throw IllegalStateException(" ERROR! Response code ${bookResponse.code}(?)")
-            } else {
-                bookListParse(bookResponse).map { book ->
-                    println("Detected book ${book.name}")
-                }
-            }
-        }
+        return processSeriesPage(response)
     }
 
-    private fun bookListRequest(url: String): Request =
-        GET("$url/books?unpaged=true&media_status=READY&deleted=false")
+    fun fetchBooksForSeries(seriesId: String): List<String> {
+        val bookResponse = client.newCall(bookListRequest(seriesId)).execute()
+        if (bookResponse.code != 200) {
+            throw IllegalStateException(" ERROR! Response code ${bookResponse.code}(?)")
+        }
+
+        return bookListParse(bookResponse).map { book -> book.id }
+    }
+
+    private fun bookListRequest(seriesId: String): Request =
+        GET("$baseUrl/api/v1/series/$seriesId/books?unpaged=true&media_status=READY&deleted=false")
 
     private fun bookListParse(response: Response): List<BookDto> {
         val bookResponseBody = response.body ?: throw IllegalStateException("Response code ${response.code}")
