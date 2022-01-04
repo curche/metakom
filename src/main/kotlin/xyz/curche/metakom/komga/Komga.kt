@@ -43,6 +43,17 @@ open class Komga(config: Config) {
         return "ERROR"
     }
 
+    fun verifyUser(): Boolean {
+        val request = GET("$baseUrl/api/v1/users/me")
+        val response = client.newCall(request).execute()
+
+        if (response.code == 200) {
+            val user = json.decodeFromString<UserDto>(response.body!!.string())
+            return user.roles.any { it == "ADMIN" }
+        }
+        return false
+    }
+
     // pages indexed 0...N
     private fun popularMangaRequest(page: Int): Request =
         GET("$baseUrl/api/v1/series?page=${page}&deleted=false")
