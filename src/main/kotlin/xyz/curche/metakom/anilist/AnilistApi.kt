@@ -91,7 +91,7 @@ class AnilistApi {
         val searchResults = search(searchString)
 
         searchResults.mapIndexed { index: Int, it: ALSearchResult ->
-            println("$index - ${it.title_english} ${it.title_romaji}, ${it.anilist_id}: ${it.publication_status}, (${it.country_of_origin})")
+            println("$index - ${it.anilist_id} - ${it.title_english} | ${it.title_romaji}: ${it.start_date_fuzzy}, ${it.publication_status.lowercase()}, (${it.country_of_origin})")
         }
         println("Select the corresponding ID: ")
         val choice = readLine()!!.toIntOrNull() ?: 0
