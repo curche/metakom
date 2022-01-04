@@ -18,6 +18,7 @@ import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.toRequestBody
 import xyz.curche.metakom.network.POST
 import xyz.curche.metakom.network.interceptor.RateLimitInterceptor
+import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.concurrent.TimeUnit.MINUTES
 
@@ -164,7 +165,7 @@ class AnilistApi {
                 struct[dateKey]!!.jsonObject["month"]!!.jsonPrimitive.int - 1,
                 struct[dateKey]!!.jsonObject["day"]!!.jsonPrimitive.int
             )
-            date.toString()
+            dateFormat.format(date.time)
         } catch (_: Exception) {
             "NA"
         }
@@ -174,6 +175,7 @@ class AnilistApi {
         private const val apiUrl = "https://graphql.anilist.co/"
         private const val baseMangaUrl = "https://anilist.co/manga"
         private val jsonMime = "application/json; charset=utf-8".toMediaType()
+        private val dateFormat = SimpleDateFormat("YYYY/MM/DD")
 
         fun mangaUrl(mangaId: Int): String {
             return baseMangaUrl + mangaId
